@@ -1,11 +1,8 @@
-package com.back.domain.wiseSaying;
+package com.back.domain.wiseSaying.controller;
 
 import com.back.domain.wiseSaying.entity.WiseSaying;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping("wiseSayings")
 public class WiseSayingController {
 
     private int lastId = 5;
@@ -24,7 +22,9 @@ public class WiseSayingController {
         add(new WiseSaying(5, "피할 수 없으면 즐겨라.", "로버트 엘리엇"));
     }};
 
-    @GetMapping("/write")
+    //글쓰기
+    @GetMapping("/write" +
+            "")
     @ResponseBody
     public String write(@RequestParam String content, @RequestParam String author) {
         if(content == null || content.trim().length() == 0) {
@@ -41,7 +41,8 @@ public class WiseSayingController {
         return "%d번 명언이 등록되었습니다.".formatted(wiseSaying.getId());
     }
 
-    @GetMapping("/list")
+    //전체목록보기
+    @GetMapping
     @ResponseBody
     public String list() {
 
@@ -56,8 +57,8 @@ public class WiseSayingController {
                 """.formatted(wiseSayingsList);
     }
 
-
-    @GetMapping("/delete/{id}") // delete/1, delete/2
+    //삭제기능
+    @GetMapping("/{id}/delete") // delete/1, delete/2
     @ResponseBody
     public String delete(
             @PathVariable int id // 1, 2
@@ -67,8 +68,8 @@ public class WiseSayingController {
 
         return "%d번 명언이 삭제되었습니다".formatted(id);
     }
-
-    @GetMapping("/modify/{id}")
+    //수정기능
+    @GetMapping("/{id}/modify")
     @ResponseBody
     public String modify(
             @PathVariable int id,
@@ -83,6 +84,7 @@ public class WiseSayingController {
         return "%d번 명언이 수정되었습니다.".formatted(wiseSaying.getId());
     }
 
+    //id로 찾기
     private WiseSaying findById(int id) {
         Optional<WiseSaying> wiseSaying = wiseSayings.stream()
                 .filter(w -> w.getId() == id)
@@ -93,5 +95,19 @@ public class WiseSayingController {
         }
 
         return wiseSaying.get();
+    }
+    //상세보기구현
+    @GetMapping("/{id}")
+    @ResponseBody
+    public String detail(
+            @PathVariable int id
+    ) {
+
+        WiseSaying wiseSaying = findById(id);
+        return """
+                <h1>번호 : %s</h1>
+                <div>명언 : %s</div>
+                <div>작가 : %s</div>
+                """.formatted(wiseSaying.getId(), wiseSaying.getContent(), wiseSaying.getAuthor());
     }
 }

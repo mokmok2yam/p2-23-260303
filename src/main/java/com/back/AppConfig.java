@@ -28,16 +28,11 @@ public class AppConfig {
         return 100;
     }
 
-//    @Bean
-//    public ApplicationRunner myApplicationRunner() {
-//        return new MyApplicationRunner();
-//    }
-
     @Bean
     @Order(1)
     public ApplicationRunner myApplicationRunner1() {
         return args -> {
-            System.out.println("MyApplicationRunner is running");
+            System.out.println("MyApplicationRunner1 is running");
         };
     }
 
@@ -45,27 +40,34 @@ public class AppConfig {
     @Order(2)
     public ApplicationRunner myApplicationRunner2() {
         return args -> {
-            System.out.println("MyApplicationRunner is running");
+            System.out.println("MyApplicationRunner2 is running");
         };
     }
+
     @Autowired
     @Lazy
-    private  AppConfig self;
+    private AppConfig self; // AppConfigProxy의 리모콘
 
     @Bean
     public ApplicationRunner myApplicationRunner3() {
-        return ApplicationArguments-> {
-            work1();
-            work2();
+        return args -> {
+            self.work1();
+            self.work2();
         };
     }
+
     @Transactional
     public void work1() {
-        System.out.println("회원 테스트 데이터 생성");
+        // start transaction
+//        memrepository.find(); // select ...
+//        memrepository.save(); // insert ...
+//        memrepository.delete(); // delete ...
+
+        // commit
     }
+
     @Transactional
     public void work2() {
         System.out.println("work2 is running");
     }
 }
-

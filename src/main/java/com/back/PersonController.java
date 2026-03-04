@@ -7,16 +7,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequiredArgsConstructor
-
 public class PersonController {
 
     private final PersonService personService;
 
-
     @GetMapping("/people")
     @ResponseBody
     public String people() {
-
+        System.out.println("test");
         return "사람 수 : %d".formatted(personService.count());
     }
 }
